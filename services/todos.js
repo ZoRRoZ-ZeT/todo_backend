@@ -1,6 +1,6 @@
 import { decorate, inject, injectable } from 'inversify';
 // eslint-disable-next-line import/extensions
-import TYPES from '../constant/types.js';
+import TYPES from '../constants/types.js';
 
 class TodoService {
   constructor(todoRepository) {
@@ -22,8 +22,8 @@ class TodoService {
     return task;
   }
 
-  updateTask(id, todoDto) {
-    const updatedTask = this.todoRepository.updateTask(id, todoDto);
+  updateTask(todoDto) {
+    const updatedTask = this.todoRepository.updateTask(todoDto.id, todoDto);
     return updatedTask;
   }
 
