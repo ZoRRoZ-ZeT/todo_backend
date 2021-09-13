@@ -1,7 +1,7 @@
 import Router from 'express';
 import { decorate, inject, injectable } from 'inversify';
 // eslint-disable-next-line import/extensions
-import TYPES from '../constant/types.js';
+import TYPES from '../constants/types.js';
 
 class TodoRouter {
   constructor(todoController) {

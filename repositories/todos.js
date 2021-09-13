@@ -1,4 +1,6 @@
 import { decorate, injectable } from 'inversify';
+// eslint-disable-next-line import/extensions
+import NotFoundError from '../exceptions/notFound.js';
 
 class TodoRepository {
   constructor() {
@@ -20,6 +22,11 @@ class TodoRepository {
 
   getTaskById(id) {
     const task = this.tasks.find((x) => x.id === +id);
+    if (task === undefined) {
+      throw new NotFoundError([{
+        message: 'Task not found',
+      }]);
+    }
     return task;
   }
 
