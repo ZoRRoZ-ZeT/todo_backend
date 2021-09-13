@@ -1,12 +1,16 @@
 import express from 'express';
-import router from './routers/router.js';
+// eslint-disable-next-line import/extensions
+import Application from './application.js';
 
-const PORT = 5000;
+const PORT = 5001;
+
+const application = new Application();
+application.run();
 
 const app = express();
-
 app.use(express.json());
-app.use('/api', router);
+
+app.use('/', application.getRootRouter());
 
 const startApp = async () => {
   try {
