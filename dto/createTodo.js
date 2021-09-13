@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/extensions
+import ValidationError from '../exceptions/validation.js';
 import { isRequired, isString, validateSingle } from '../utils/validations.js';
-import ValidationError from '../validations/error.js';
 
 class CreateTodoDto {
   constructor(data = {}) {
@@ -11,10 +11,14 @@ class CreateTodoDto {
   }
 
   validate() {
-    const error = validateSingle('value', this.value, [isRequired, isString]);
+    const errors = [];
+    const validationResult = validateSingle('value', this.value, [isRequired, isString]);
+    if (validationResult) {
+      errors.push(validationResult);
+    }
 
-    if (error) {
-      throw new ValidationError(error);
+    if (errors.length) {
+      throw new ValidationError(errors);
     }
   }
 }

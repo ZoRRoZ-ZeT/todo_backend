@@ -1,6 +1,6 @@
 /* eslint-disable import/extensions */
-import NotFoundError from '../../exceptions/notFound.js';
-import ValidationError from '../../validations/error.js';
+import NotFoundError from '../exceptions/notFound.js';
+import ValidationError from '../exceptions/validation.js';
 
 // eslint-disable-next-line no-unused-vars
 const errorMiddleware = (err, req, res, next) => {

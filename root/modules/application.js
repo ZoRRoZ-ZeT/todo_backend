@@ -2,6 +2,7 @@ import { decorate, inject, injectable } from 'inversify';
 import express from 'express';
 // eslint-disable-next-line import/extensions
 import TYPES from '../../constants/types.js';
+import errorMiddleware from '../../middleware/error.js';
 
 class Application {
   constructor(rootRouter) {
@@ -15,6 +16,7 @@ class Application {
     this.server.use(express.json());
 
     this.server.use('/', this.rootRouter.getRouter());
+    this.server.use(errorMiddleware);
 
     const startApp = async () => {
       try {

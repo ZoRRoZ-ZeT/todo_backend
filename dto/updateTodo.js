@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/extensions
+import ValidationError from '../exceptions/validation.js';
 import { isBoolean, isNumber, isRequired, isString, validateMultiple } from '../utils/validations.js';
-import ValidationError from '../validations/error.js';
 
 class UpdateTodoDto {
   constructor(data = {}) {
