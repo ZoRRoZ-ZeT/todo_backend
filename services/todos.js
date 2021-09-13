@@ -1,31 +1,39 @@
-import TodoRepository from "../repositories/todos.js";
+import { decorate, inject, injectable } from 'inversify';
+// eslint-disable-next-line import/extensions
+import TYPES from '../constant/types.js';
 
 class TodoService {
-	
-	createTask(value, isChecked) {
-		const createdTask = TodoRepository.createTask({value, isChecked});
-		return createdTask;
-	}
+  constructor(todoRepository) {
+    this.todoRepository = todoRepository;
+  }
 
-	getTasks() {
-		const tasks = TodoRepository.getTasks();
-		return tasks;
-	}
+  createTask(todoDto) {
+    const createdTask = this.todoRepository.createTask(todoDto);
+    return createdTask;
+  }
 
-	getTaskById(id) {
-		const task = TodoRepository.getTaskById(id);
-		return task;
-	}
+  getTasks() {
+    const tasks = this.todoRepository.getTasks();
+    return tasks;
+  }
 
-	updateTask(id, task) {
-		const updatedTask = TodoRepository.updateTask(id,task);
-		return updatedTask;
-	}
+  getTaskById(todoDto) {
+    const task = this.todoRepository.getTaskById(todoDto.id);
+    return task;
+  }
 
-	deleteTask(id) {
-		const deletedTask = TodoRepository.deleteTask(id);
-		return deletedTask;
-	}
+  updateTask(id, todoDto) {
+    const updatedTask = this.todoRepository.updateTask(id, todoDto);
+    return updatedTask;
+  }
+
+  deleteTask(todoDto) {
+    const deletedTask = this.todoRepository.deleteTask(todoDto.id);
+    return deletedTask;
+  }
 }
 
-export default new TodoService();
+decorate(injectable(), TodoService);
+decorate(inject(TYPES.TodoRepository), TodoService, 0);
+
+export default TodoService;

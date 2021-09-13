@@ -1,58 +1,78 @@
-import TodoService from "../services/todos.js";
+/* eslint-disable import/extensions */
+import { decorate, inject, injectable } from 'inversify';
+
+import TYPES from '../constant/types.js';
+import CreateTodoDto from '../dto/createTodo.js';
+import DeleteTodoDto from '../dto/deleteTodo.js';
+import GetTodoDto from '../dto/getTodo.js';
+import UpdateTodoDto from '../dto/updateTodo.js';
 
 class TodoController {
-	async create(req,res) {
-		try {
-			const {value, isChecked} = req.body;
-			const task = TodoService.createTask(value,isChecked);
+  constructor(todoService) {
+    this.todoService = todoService;
 
-			res.json(task);
-		} catch(e) {
-			res.status(500).json(e);
-		}
-	}
+    this.createTask = this.createTask.bind(this);
+    this.getAllTasks = this.getAllTasks.bind(this);
+    this.getOneTask = this.getOneTask.bind(this);
+    this.updateTask = this.updateTask.bind(this);
+    this.deleteTask = this.deleteTask.bind(this);
+  }
 
-	async getAll(req,res) {
-		try {
-			const tasks = TodoService.getTasks();
-			res.json(tasks);
-		} catch (e) {
-			res.status(500).json(e);
-		}
-	}
+  async createTask(req, res) {
+    try {
+      const todoDto = new CreateTodoDto(req.body);
+      const task = this.todoService.createTask(todoDto);
 
-	async getOne(req, res) {
-		try {
-			const {id} = req.params;
-			const task = TodoService.getTaskById(id);
+      res.status(200).json(task);
+    } catch (e) {
+      res.status(500).json(e);
+    }
+  }
 
-			res.json(task);
-		} catch (e) {
-			res.status(500).json(e);
-		}
-	}
+  async getAllTasks(req, res) {
+    try {
+      const tasks = await this.todoService.getTasks();
+      res.status(200).json(tasks);
+    } catch (e) {
+      res.status(500).json(e);
+    }
+  }
 
-	async update(req, res) {
-		try {
-			const body = req.body;
-			const task = TodoService.updateTask(body.id, body);
+  async getOneTask(req, res) {
+    try {
+      const todoDto = new GetTodoDto(req.params);
+      const task = this.todoService.getTaskById(todoDto);
 
-			res.json(task);
-		} catch (e) {
-			res.status(500).json(e);
-		}
-	}
+      res.status(200).json(task);
+    } catch (e) {
+      res.status(500).json(e);
+    }
+  }
 
-	async delete(req, res) {
-		try	{
-			const {id} = req.params;
-			const task = TodoService.deleteTask(id);
+  async updateTask(req, res) {
+    try {
+      const todoDto = new UpdateTodoDto(req.body);
+      const task = this.todoService.updateTask(todoDto);
 
-			res.json(task);
-		} catch (e) {
-			res.status(500).json(e);
-		}
-	}
+      res.status(200).json(task);
+    } catch (e) {
+      res.status(500).json(e);
+    }
+  }
+
+  async deleteTask(req, res) {
+    try {
+      const todoDto = new DeleteTodoDto(req.params);
+      const task = this.todoService.deleteTask(todoDto);
+
+      res.status(200).json(task);
+    } catch (e) {
+      res.status(500).json(e);
+    }
+  }
 }
 
-export default new TodoController();
+decorate(injectable(), TodoController);
+decorate(inject(TYPES.TodoService), TodoController, 0);
+
+export default TodoController;
