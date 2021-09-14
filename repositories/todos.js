@@ -18,7 +18,11 @@ class TodoRepository {
 
   async getTaskById(id) {
     const task = await Task.findById(id);
-    this.checkTask(task);
+    if (!task) {
+      throw new NotFoundError([{
+        message: 'Task not found',
+      }]);
+    }
 
     return task;
   }
@@ -31,24 +35,28 @@ class TodoRepository {
 
   async updateTask(id, todoDto) {
     const updatedTask = await Task.findByIdAndUpdate(id, todoDto, { new: true });
-    this.checkTask(updatedTask);
+    if (!updatedTask) {
+      throw new NotFoundError([{
+        message: 'Task not found',
+      }]);
+    }
 
     return updatedTask;
   }
 
   async deleteTask(id) {
     const deletedTask = await Task.findByIdAndDelete(id);
-    this.checkTask(deletedTask);
+    if (!deletedTask) {
+      throw new NotFoundError([{
+        message: 'Task not found',
+      }]);
+    }
 
     return deletedTask;
   }
 
   checkTask(task) {
-    if (task === undefined) {
-      throw new NotFoundError([{
-        message: 'Task not found',
-      }]);
-    }
+    return task === undefined;
   }
 }
 
