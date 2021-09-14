@@ -1,52 +1,54 @@
+/* eslint-disable class-methods-use-this */
+/* eslint-disable import/extensions */
 import { decorate, injectable } from 'inversify';
-// eslint-disable-next-line import/extensions
+
 import NotFoundError from '../exceptions/notFound.js';
+import Task from './models/task.js';
 
 class TodoRepository {
-  constructor() {
-    this.tasks = [];
-    this.currentId = 0;
-  }
-
-  createTask(todoDto) {
+  async createTask(todoDto) {
     const task = {
-      id: this.currentId,
       value: todoDto.value,
       isChecked: todoDto.isChecked,
     };
-    this.tasks.push(task);
-    this.currentId += 1;
+
+    const createdTask = await Task.create(task);
+    return createdTask;
+  }
+
+  async getTaskById(id) {
+    const task = await Task.findById(id);
+    this.checkTask(task);
 
     return task;
   }
 
-  getTaskById(id) {
-    const task = this.tasks.find((x) => x.id === +id);
+  async getTasks() {
+    const tasks = await Task.find();
+
+    return tasks;
+  }
+
+  async updateTask(id, todoDto) {
+    const updatedTask = await Task.findByIdAndUpdate(id, todoDto, { new: true });
+    this.checkTask(updatedTask);
+
+    return updatedTask;
+  }
+
+  async deleteTask(id) {
+    const deletedTask = await Task.findByIdAndDelete(id);
+    this.checkTask(deletedTask);
+
+    return deletedTask;
+  }
+
+  checkTask(task) {
     if (task === undefined) {
       throw new NotFoundError([{
         message: 'Task not found',
       }]);
     }
-    return task;
-  }
-
-  getTasks() {
-    return this.tasks.slice();
-  }
-
-  updateTask(id, todoDto) {
-    const oldTask = this.getTaskById(id);
-    oldTask.value = todoDto.value;
-    oldTask.isChecked = todoDto.isChecked;
-
-    return oldTask;
-  }
-
-  deleteTask(id) {
-    const taskIndex = this.tasks.findIndex((x) => x.id === +id);
-    const deletedTask = this.tasks.splice(taskIndex, 1);
-
-    return deletedTask;
   }
 }
 

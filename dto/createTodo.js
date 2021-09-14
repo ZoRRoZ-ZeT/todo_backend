@@ -1,4 +1,4 @@
-// eslint-disable-next-line import/extensions
+/* eslint-disable import/extensions */
 import ValidationError from '../exceptions/validation.js';
 import { isRequired, isString, validateSingle } from '../utils/validations.js';
 
