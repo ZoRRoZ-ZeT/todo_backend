@@ -20,8 +20,9 @@ class TodoController {
 
   async createTask(req, res, next) {
     try {
+      console.log(req.body);
       const todoDto = new CreateTodoDto(req.body);
-      const task = this.todoService.createTask(todoDto);
+      const task = await this.todoService.createTask(todoDto);
 
       res.status(200).json({
         statusCode: 200,
@@ -47,7 +48,7 @@ class TodoController {
   async getOneTask(req, res, next) {
     try {
       const todoDto = new GetTodoDto(req.params);
-      const task = this.todoService.getTaskById(todoDto);
+      const task = await this.todoService.getTaskById(todoDto);
 
       res.status(200).json({
         statusCode: 200,
@@ -61,7 +62,7 @@ class TodoController {
   async updateTask(req, res, next) {
     try {
       const todoDto = new UpdateTodoDto(req.body);
-      const task = this.todoService.updateTask(todoDto);
+      const task = await this.todoService.updateTask(todoDto);
 
       res.status(200).json({
         statusCode: 200,
@@ -75,7 +76,7 @@ class TodoController {
   async deleteTask(req, res, next) {
     try {
       const todoDto = new DeleteTodoDto(req.params);
-      const task = this.todoService.deleteTask(todoDto);
+      const task = await this.todoService.deleteTask(todoDto);
 
       res.status(200).json({
         statusCode: 200,
