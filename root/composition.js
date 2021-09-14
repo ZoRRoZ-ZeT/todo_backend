@@ -8,7 +8,7 @@ import TodoController from '../controllers/todos.js';
 import TodoRouter from '../routers/todos.js';
 import TodoService from '../services/todos.js';
 import RootRouter from '../routers/root.js';
-import Application from './modules/application.js';
+import Application from './application.js';
 
 class CompositionRoot {
   initializeContainer() {
