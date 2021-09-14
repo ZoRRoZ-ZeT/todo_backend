@@ -3,7 +3,6 @@ import { Router } from 'express';
 import { decorate, inject, injectable } from 'inversify';
 
 import TYPES from '../constants/types.js';
-import errorMiddleware from '../middleware/error.js';
 
 class RootRouter {
   constructor(todoRouter) {
