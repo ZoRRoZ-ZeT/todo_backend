@@ -19,7 +19,7 @@ const errorMiddleware = (err, req, res, next) => {
     });
     return;
   }
-  
+
   res.status(500).json({
     statusCode: 500,
     error: { type: 'UnexceptedError', errors: {} },
