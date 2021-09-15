@@ -1,9 +1,9 @@
-class TodoDTO {
-  constructor(data = null) {
-    this.id = data?.id;
-    this.value = data?.value;
-    this.isChecked = data?.isChecked;
+class TodoDto {
+  constructor({ id, value, isChecked }) {
+    this.id = id;
+    this.value = value;
+    this.isChecked = isChecked;
   }
 }
 
-export default TodoDTO;
+export default TodoDto;
