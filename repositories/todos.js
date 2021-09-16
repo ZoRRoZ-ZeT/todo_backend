@@ -10,6 +10,7 @@ class TodoRepository {
     const task = {
       value: todoDto.value,
       isChecked: todoDto.isChecked,
+      priority: todoDto.priority,
     };
 
     const createdTask = await Task.create(task);
