@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 const Task = new mongoose.Schema({
   value: { type: String, required: true },
   isChecked: { type: Boolean, required: true },
+  priority: { type: String, required: true },
 }, {
   versionKey: false,
 });

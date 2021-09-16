@@ -5,6 +5,13 @@ export const isString = (value) => ((typeof value !== 'string') ? 'Field must be
 
 export const isBoolean = (value) => ((typeof value !== 'boolean') ? 'Field must be boolean' : undefined);
 
+export const isOnList = (list) => (value) => {
+  if (!list.includes(value)) {
+    return `Field must one of the list values [${list.join(',')}]`;
+  }
+  return undefined;
+};
+
 export const validateSingle = (fieldName, value, validators) => {
   // eslint-disable-next-line no-restricted-syntax
   for (const validator of validators) {
