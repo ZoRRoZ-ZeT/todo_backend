@@ -17,7 +17,9 @@ class TodoRouter {
     this.router.get('/todos', this.todoController.getAllTasks);
     this.router.get('/todos/:id', this.todoController.getOneTask);
     this.router.put('/todos', this.todoController.updateTask);
+    this.router.put('/todos/toggle', this.todoController.toggleTasks);
     this.router.delete('/todos/:id', this.todoController.deleteTask);
+    this.router.delete('/todos', this.todoController.deleteCompleted);
   }
 
   getRouter() {

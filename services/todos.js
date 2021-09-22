@@ -27,9 +27,19 @@ class TodoService {
     return updatedTask;
   }
 
+  async toggleTasks() {
+    const toggledTasks = await this.todoRepository.toggleTasks();
+    return toggledTasks;
+  }
+
   async deleteTask(todoDto) {
     const deletedTask = await this.todoRepository.deleteTask(todoDto.id);
     return deletedTask;
+  }
+
+  async deleteCompleted(filter) {
+    const deletedTasks = await this.todoRepository.deleteCompleted(filter);
+    return deletedTasks;
   }
 }
 

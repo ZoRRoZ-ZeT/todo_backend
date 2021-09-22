@@ -16,12 +16,13 @@ class TodoController {
     this.getAllTasks = this.getAllTasks.bind(this);
     this.getOneTask = this.getOneTask.bind(this);
     this.updateTask = this.updateTask.bind(this);
+    this.toggleTasks = this.toggleTasks.bind(this);
     this.deleteTask = this.deleteTask.bind(this);
+    this.deleteCompleted = this.deleteCompleted.bind(this);
   }
 
   async createTask(req, res, next) {
     try {
-      console.log(req.body);
       const todoDto = new CreateTodoDto(req.body);
       const task = await this.todoService.createTask(todoDto);
       const taskDto = new TodoDto(task);
@@ -79,6 +80,20 @@ class TodoController {
     }
   }
 
+  async toggleTasks(req, res, next) {
+    try {
+      const tasks = await this.todoService.toggleTasks();
+      const tasksDto = tasks.map((task) => new TodoDto(task));
+
+      res.status(200).json({
+        statusCode: 200,
+        payload: tasksDto,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async deleteTask(req, res, next) {
     try {
       const todoDto = new DeleteTodoDto(req.params);
@@ -88,6 +103,20 @@ class TodoController {
       res.status(200).json({
         statusCode: 200,
         payload: taskDto,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async deleteCompleted(req, res, next) {
+    try {
+      const tasks = await this.todoService.deleteCompleted(Boolean(req.body));
+      const tasksDto = tasks.map((task) => new TodoDto(task));
+
+      res.status(200).json({
+        statusCode: 200,
+        payload: tasksDto,
       });
     } catch (error) {
       next(error);

@@ -1,6 +1,7 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable import/extensions */
 import { decorate, injectable } from 'inversify';
+import UpdateTodoDto from '../dto/updateTodo.js';
 
 import NotFoundError from '../exceptions/notFound.js';
 import Task from './models/task.js';
@@ -45,6 +46,26 @@ class TodoRepository {
     return updatedTask;
   }
 
+  async toggleTasks() {
+    const toggledTasks = [];
+    const tasks = await Task.find().then(
+      (findedTasks) => findedTasks.map(
+        (task) => new UpdateTodoDto(task),
+      ),
+    );
+    const fillValue = tasks.some((task) => task.isChecked === false);
+
+    await Promise.all(tasks.map(async (task) => {
+      const toggledTask = await this.updateTask(task.id, {
+        ...task,
+        isChecked: fillValue,
+      }, { new: true });
+      toggledTasks.push(toggledTask);
+    }));
+
+    return toggledTasks;
+  }
+
   async deleteTask(id) {
     const deletedTask = await Task.findByIdAndDelete(id);
     if (!deletedTask) {
@@ -54,6 +75,21 @@ class TodoRepository {
     }
 
     return deletedTask;
+  }
+
+  async deleteCompleted(filter) {
+    const deletedTasks = [];
+    const tasks = await Task.find();
+
+    await Promise.all(tasks.map(async (task) => {
+      if (task.isChecked === filter) {
+        const { id } = task;
+        const deletedTask = await Task.findByIdAndDelete(id);
+        deletedTasks.push(deletedTask);
+      }
+    }));
+
+    return deletedTasks;
   }
 
   checkTask(task) {
