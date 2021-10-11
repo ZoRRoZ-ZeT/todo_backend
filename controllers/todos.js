@@ -82,12 +82,11 @@ class TodoController {
 
   async toggleTasks(req, res, next) {
     try {
-      const tasks = await this.todoService.toggleTasks();
-      const tasksDto = tasks.map((task) => new TodoDto(task));
+      const fillValue = await this.todoService.toggleTasks();
 
       res.status(200).json({
         statusCode: 200,
-        payload: tasksDto,
+        payload: fillValue,
       });
     } catch (error) {
       next(error);

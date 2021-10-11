@@ -3,7 +3,7 @@
 import PRIORITIES from '../constants/priorities.js';
 import ValidationError from '../exceptions/validation.js';
 import {
-  isBoolean, isOnList, isRequired, isString, validateMultiple,
+  isBoolean, isOnList, isRequired, isString, isNumber, validateMultiple,
 } from '../utils/validations.js';
 
 class UpdateTodoDto {
@@ -12,6 +12,7 @@ class UpdateTodoDto {
     this.value = data.value;
     this.isChecked = data.isChecked;
     this.priority = data.priority;
+    this.sort = data.sort;
 
     this.validateData();
   }
@@ -22,6 +23,7 @@ class UpdateTodoDto {
       { field: 'value', value: this.value, validators: [isRequired, isString] },
       { field: 'isChecked', value: this.isChecked, validators: [isRequired, isBoolean] },
       { field: 'priority', value: this.priority, validators: [isRequired, isOnList(Object.values(PRIORITIES))] },
+      { field: 'sort', value: this.sort, validators: [isRequired, isNumber] },
     ];
 
     const errors = validateMultiple(fieldsToValidate);
