@@ -8,10 +8,17 @@ import Task from './models/task.js';
 
 class TodoRepository {
   async createTask(todoDto) {
+    const currentMaxSortId = (await Task.find()
+      .then(
+        (tasks) => (tasks.length ? Math.max(...tasks.map(
+          (task) => task.sort,
+        )) : 0),
+      ));
     const task = {
       value: todoDto.value,
       isChecked: todoDto.isChecked,
       priority: todoDto.priority,
+      sort: currentMaxSortId + 1,
     };
 
     const createdTask = await Task.create(task);
@@ -47,7 +54,6 @@ class TodoRepository {
   }
 
   async toggleTasks() {
-    const toggledTasks = [];
     const tasks = await Task.find().then(
       (findedTasks) => findedTasks.map(
         (task) => new UpdateTodoDto(task),
@@ -56,14 +62,13 @@ class TodoRepository {
     const fillValue = tasks.some((task) => task.isChecked === false);
 
     await Promise.all(tasks.map(async (task) => {
-      const toggledTask = await this.updateTask(task.id, {
+      await this.updateTask(task.id, {
         ...task,
         isChecked: fillValue,
       }, { new: true });
-      toggledTasks.push(toggledTask);
     }));
 
-    return toggledTasks;
+    return fillValue;
   }
 
   async deleteTask(id) {

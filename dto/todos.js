@@ -4,11 +4,13 @@ class TodoDto {
     value,
     isChecked,
     priority,
+    sort,
   }) {
     this.id = id;
     this.value = value;
     this.isChecked = isChecked;
     this.priority = priority;
+    this.sort = sort;
   }
 }
 

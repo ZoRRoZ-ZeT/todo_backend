@@ -28,8 +28,8 @@ class TodoService {
   }
 
   async toggleTasks() {
-    const toggledTasks = await this.todoRepository.toggleTasks();
-    return toggledTasks;
+    const fillValue = await this.todoRepository.toggleTasks();
+    return fillValue;
   }
 
   async deleteTask(todoDto) {
