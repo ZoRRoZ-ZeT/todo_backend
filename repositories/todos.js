@@ -7,8 +7,12 @@ import NotFoundError from '../exceptions/notFound.js';
 import Task from './models/task.js';
 
 class TodoRepository {
-  async createTask(todoDto) {
-    const currentMaxSortId = (await Task.find()
+  async getTasksByUser(userId) {
+    return Task.find({ userId });
+  }
+
+  async createTask(todoDto, userId) {
+    const currentMaxSortId = (await this.getTasksByUser(userId)
       .then(
         (tasks) => (tasks.length ? Math.max(...tasks.map(
           (task) => task.sort,
@@ -19,6 +23,7 @@ class TodoRepository {
       isChecked: todoDto.isChecked,
       priority: todoDto.priority,
       sort: currentMaxSortId + 1,
+      userId,
     };
 
     const createdTask = await Task.create(task);
@@ -36,12 +41,6 @@ class TodoRepository {
     return task;
   }
 
-  async getTasks() {
-    const tasks = await Task.find();
-
-    return tasks;
-  }
-
   async updateTask(id, todoDto) {
     const updatedTask = await Task.findByIdAndUpdate(id, todoDto, { new: true });
     if (!updatedTask) {
@@ -53,8 +52,8 @@ class TodoRepository {
     return updatedTask;
   }
 
-  async toggleTasks() {
-    const tasks = await Task.find().then(
+  async toggleTasks(userId) {
+    const tasks = await this.getTasksByUser(userId).then(
       (findedTasks) => findedTasks.map(
         (task) => new UpdateTodoDto(task),
       ),
@@ -82,9 +81,9 @@ class TodoRepository {
     return deletedTask;
   }
 
-  async deleteCompleted(filter) {
+  async deleteCompleted(filter, userId) {
     const deletedTasks = [];
-    const tasks = await Task.find();
+    const tasks = await this.getTasksByUser(userId);
 
     await Promise.all(tasks.map(async (task) => {
       if (task.isChecked === filter) {

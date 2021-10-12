@@ -1,4 +1,5 @@
 /* eslint-disable import/extensions */
+import AuthorizationError from '../exceptions/auth.js';
 import NotFoundError from '../exceptions/notFound.js';
 import ValidationError from '../exceptions/validation.js';
 
@@ -15,6 +16,14 @@ const errorMiddleware = (err, req, res, next) => {
   if (err instanceof NotFoundError) {
     res.status(404).json({
       statusCode: 404,
+      errors: err.errors,
+    });
+    return;
+  }
+
+  if (err instanceof AuthorizationError) {
+    res.status(401).json({
+      statusCode: 401,
       errors: err.errors,
     });
     return;

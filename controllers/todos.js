@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 /* eslint-disable import/extensions */
 import { decorate, inject, injectable } from 'inversify';
 
@@ -7,6 +8,7 @@ import DeleteTodoDto from '../dto/deleteTodo.js';
 import GetTodoDto from '../dto/getTodo.js';
 import UpdateTodoDto from '../dto/updateTodo.js';
 import TodoDto from '../dto/todos.js';
+import { validateAccessToken } from '../utils/validations.js';
 
 class TodoController {
   constructor(todoService) {
@@ -19,12 +21,20 @@ class TodoController {
     this.toggleTasks = this.toggleTasks.bind(this);
     this.deleteTask = this.deleteTask.bind(this);
     this.deleteCompleted = this.deleteCompleted.bind(this);
+    this.parseAccessToken = this.parseAccessToken.bind(this);
+  }
+
+  parseAccessToken(header) {
+    const token = header.split(' ')[1];
+    const userData = validateAccessToken(token);
+    return userData.id;
   }
 
   async createTask(req, res, next) {
     try {
       const todoDto = new CreateTodoDto(req.body);
-      const task = await this.todoService.createTask(todoDto);
+      const userId = this.parseAccessToken(req.headers.authorization);
+      const task = await this.todoService.createTask(todoDto, userId);
       const taskDto = new TodoDto(task);
 
       res.status(200).json({
@@ -38,7 +48,8 @@ class TodoController {
 
   async getAllTasks(req, res, next) {
     try {
-      const tasks = await this.todoService.getTasks();
+      const userId = this.parseAccessToken(req.headers.authorization);
+      const tasks = await this.todoService.getTasks(userId);
       const tasksDto = tasks.map((task) => new TodoDto(task));
 
       res.status(200).json({
@@ -82,7 +93,8 @@ class TodoController {
 
   async toggleTasks(req, res, next) {
     try {
-      const fillValue = await this.todoService.toggleTasks();
+      const userId = this.parseAccessToken(req.headers.authorization);
+      const fillValue = await this.todoService.toggleTasks(userId);
 
       res.status(200).json({
         statusCode: 200,
@@ -110,7 +122,8 @@ class TodoController {
 
   async deleteCompleted(req, res, next) {
     try {
-      const tasks = await this.todoService.deleteCompleted(Boolean(req.body));
+      const userId = this.parseAccessToken(req.headers.authorization);
+      const tasks = await this.todoService.deleteCompleted(Boolean(req.body), userId);
       const tasksDto = tasks.map((task) => new TodoDto(task));
 
       res.status(200).json({

@@ -7,13 +7,13 @@ class TodoService {
     this.todoRepository = todoRepository;
   }
 
-  async createTask(todoDto) {
-    const createdTask = await this.todoRepository.createTask(todoDto);
+  async createTask(todoDto, userId) {
+    const createdTask = await this.todoRepository.createTask(todoDto, userId);
     return createdTask;
   }
 
-  async getTasks() {
-    const tasks = await this.todoRepository.getTasks();
+  async getTasks(userId) {
+    const tasks = await this.todoRepository.getTasksByUser(userId);
     return tasks;
   }
 
@@ -27,8 +27,8 @@ class TodoService {
     return updatedTask;
   }
 
-  async toggleTasks() {
-    const fillValue = await this.todoRepository.toggleTasks();
+  async toggleTasks(userId) {
+    const fillValue = await this.todoRepository.toggleTasks(userId);
     return fillValue;
   }
 
@@ -37,8 +37,8 @@ class TodoService {
     return deletedTask;
   }
 
-  async deleteCompleted(filter) {
-    const deletedTasks = await this.todoRepository.deleteCompleted(filter);
+  async deleteCompleted(filter, userId) {
+    const deletedTasks = await this.todoRepository.deleteCompleted(filter, userId);
     return deletedTasks;
   }
 }
