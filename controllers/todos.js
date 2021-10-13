@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 /* eslint-disable import/extensions */
 import { decorate, inject, injectable } from 'inversify';
 
@@ -24,7 +25,7 @@ class TodoController {
   async createTask(req, res, next) {
     try {
       const todoDto = new CreateTodoDto(req.body);
-      const task = await this.todoService.createTask(todoDto);
+      const task = await this.todoService.createTask(todoDto, req.userId);
       const taskDto = new TodoDto(task);
 
       res.status(200).json({
@@ -38,7 +39,7 @@ class TodoController {
 
   async getAllTasks(req, res, next) {
     try {
-      const tasks = await this.todoService.getTasks();
+      const tasks = await this.todoService.getTasks(req.userId);
       const tasksDto = tasks.map((task) => new TodoDto(task));
 
       res.status(200).json({
@@ -82,7 +83,7 @@ class TodoController {
 
   async toggleTasks(req, res, next) {
     try {
-      const fillValue = await this.todoService.toggleTasks();
+      const fillValue = await this.todoService.toggleTasks(req.userId);
 
       res.status(200).json({
         statusCode: 200,
@@ -110,7 +111,7 @@ class TodoController {
 
   async deleteCompleted(req, res, next) {
     try {
-      const tasks = await this.todoService.deleteCompleted(Boolean(req.body));
+      const tasks = await this.todoService.deleteCompleted(Boolean(req.body), req.userId);
       const tasksDto = tasks.map((task) => new TodoDto(task));
 
       res.status(200).json({

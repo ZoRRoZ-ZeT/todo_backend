@@ -1,7 +1,7 @@
 /* eslint-disable import/extensions */
 import { decorate, inject, injectable } from 'inversify';
 import express from 'express';
-
+import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import TYPES from '../constants/types.js';
@@ -16,7 +16,11 @@ class Application {
     try {
       this.server = express();
       this.server.use(express.json());
-      this.server.use(cors());
+      this.server.use(cors({
+        credentials: true,
+        origin: process.env.CLIENT_URL,
+      }));
+      this.server.use(cookieParser());
 
       this.server.use('/', this.rootRouter.getRouter());
       this.server.use(errorMiddleware);

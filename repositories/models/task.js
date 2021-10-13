@@ -6,6 +6,7 @@ const Task = new mongoose.Schema({
   isChecked: { type: Boolean, required: true },
   priority: { type: String, required: true },
   sort: { type: Number, required: true },
+  userId: { type: Number, required: true },
 }, {
   versionKey: false,
 });
