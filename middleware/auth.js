@@ -6,24 +6,32 @@ const authMiddleware = (req, res, next) => {
   try {
     const { authorization } = req.headers;
     if (!authorization) {
-      throw new AuthorizationError('Вы не авторизованы!');
+      throw new AuthorizationError([{
+        message: 'You are not authorized!',
+      }]);
     }
 
     const accessToken = authorization.split(' ')[1];
     if (!accessToken) {
-      throw new AuthorizationError('Вы не авторизованы!');
+      throw new AuthorizationError([{
+        message: 'You are not authorized!',
+      }]);
     }
 
     const userData = validateAccessToken(accessToken);
     if (!userData) {
-      throw new AuthorizationError('Ваш токен не валиден!');
+      throw new AuthorizationError([{
+        message: 'Token are invalid!',
+      }]);
     }
 
     if (!userData.isActivated) {
-      throw new AuthorizationError('Ваша почта не подтверждена!');
+      throw new AuthorizationError([{
+        message: 'Account is not activated!',
+      }]);
     }
 
-    req.user = userData;
+    req.userId = userData.id;
     next();
   } catch (error) {
     next(error);

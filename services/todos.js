@@ -1,19 +1,33 @@
+/* eslint-disable import/extensions */
 import { decorate, inject, injectable } from 'inversify';
-// eslint-disable-next-line import/extensions
 import TYPES from '../constants/types.js';
+import NotFoundError from '../exceptions/notFound.js';
 
 class TodoService {
-  constructor(todoRepository) {
+  constructor(todoRepository, userService) {
     this.todoRepository = todoRepository;
+    this.userService = userService;
+  }
+
+  async getUserById(id) {
+    const userFromDb = await this.userService.getTaskById(id);
+    if (!userFromDb) {
+      throw new NotFoundError([{
+        message: 'User not found',
+      }]);
+    }
+    return userFromDb;
   }
 
   async createTask(todoDto, userId) {
-    const createdTask = await this.todoRepository.createTask(todoDto, userId);
+    const user = await this.getUserById(userId);
+    const createdTask = await this.todoRepository.createTask(todoDto, user.id);
     return createdTask;
   }
 
   async getTasks(userId) {
-    const tasks = await this.todoRepository.getTasksByUser(userId);
+    const user = await this.getUserById(userId);
+    const tasks = await this.todoRepository.getTasksByUser(user.id);
     return tasks;
   }
 
@@ -28,7 +42,8 @@ class TodoService {
   }
 
   async toggleTasks(userId) {
-    const fillValue = await this.todoRepository.toggleTasks(userId);
+    const user = await this.getUserById(userId);
+    const fillValue = await this.todoRepository.toggleTasks(user.id);
     return fillValue;
   }
 
@@ -38,12 +53,14 @@ class TodoService {
   }
 
   async deleteCompleted(filter, userId) {
-    const deletedTasks = await this.todoRepository.deleteCompleted(filter, userId);
+    const user = await this.getUserById(userId);
+    const deletedTasks = await this.todoRepository.deleteCompleted(filter, user.id);
     return deletedTasks;
   }
 }
 
 decorate(injectable(), TodoService);
 decorate(inject(TYPES.TodoRepository), TodoService, 0);
+decorate(inject(TYPES.UserService), TodoService, 1);
 
 export default TodoService;

@@ -5,6 +5,7 @@ import bcrypt from 'bcrypt';
 import { v4 } from 'uuid';
 import UserDto from '../dto/user.js';
 import { validateRefreshToken } from '../utils/validations.js';
+import AuthorizationError from '../exceptions/auth.js';
 import TYPES from '../constants/types.js';
 
 class UserService {
@@ -12,6 +13,11 @@ class UserService {
     this.userRepository = userRepository;
     this.tokenService = tokenService;
     this.mailService = mailService;
+  }
+
+  async getUserById(id) {
+    const user = await this.userRepository.getUserById(id);
+    return user;
   }
 
   async register(email, password) {
@@ -67,13 +73,17 @@ class UserService {
 
   async refresh(refreshToken) {
     if (!refreshToken) {
-      throw new Error('Unauthorized!');
+      throw new AuthorizationError([{
+        message: 'You are not authorized!',
+      }]);
     }
     const userData = validateRefreshToken(refreshToken);
     const tokenFromDb = await this.tokenService.findToken(refreshToken);
 
     if (!userData || !tokenFromDb) {
-      throw new Error('Unauthorized!');
+      throw new AuthorizationError([{
+        message: 'Token is invalid!',
+      }]);
     }
 
     const user = await this.userRepository.getUserById(userData.id);
